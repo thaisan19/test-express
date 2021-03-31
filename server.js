@@ -16,11 +16,6 @@ app.use(bodyParser.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// simple route
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to bezkoder application." });
-});
-
 // db calling
 const db = require("./app/models");
 db.mongoose
@@ -35,6 +30,12 @@ db.mongoose
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
+// simple route
+app.get("/", (req, res) => {
+  res.json({ message: "Welcome to bezkoder application." });
+});
+
+
 
 require("./app/routes/tutor.routes")(app);
 // set port, listen for requests
