@@ -1,3 +1,3 @@
 module.exports = {
-    url: "mongodb://localhost:27017/mpt_db"
+    url: "mongodb+srv://chhean:1234@cluster0.eqwzy.mongodb.net/Devcourse?retryWrites=true&w=majority"
   };
