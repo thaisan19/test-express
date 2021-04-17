@@ -21,6 +21,9 @@ app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
+require("./app/routes/course.routes")(app);
+require("./app/routes/tutor.routes")(app);
+
 // db calling
 const db = require("./app/models");
 db.mongoose
@@ -35,6 +38,7 @@ db.mongoose
     console.log("Cannot connect to the database!", err);
     process.exit();
   });
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
