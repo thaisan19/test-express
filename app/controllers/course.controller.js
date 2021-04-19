@@ -6,7 +6,7 @@ exports.create = (req, res) => {
 
   Course.create(req.body)
   .then(function(dbCourse){
-      return Tutor.findOneAndUpdate({_id: req.params.id},{$push:{course: dbCourse._id}},{new:true});
+      return Tutor.findOneAndUpdate({_id: req.params.id},{$push:{course: dbCourse._id}},{new:true, useFindAndModify: false});
   })
   .then(function(dbTutor){
       res.json(dbTutor);

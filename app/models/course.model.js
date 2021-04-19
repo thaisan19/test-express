@@ -1,16 +1,10 @@
 const { text } = require("body-parser");
-const mongoose= require('mongoose');
-const {Schema} = require('mongoose');
+
 module.exports = mongoose => {
   var schema = mongoose.Schema(
     {
       coursename: {type: String, required: true},
-      price: {type: String, required: true},
-      tutor: {
-          type: Schema.Types.ObjectId,
-          ref: 'Tutor',
-          required: true
-      }
+      price: {type: String, required: true}
     },
     { timestamps: true }
   );

@@ -18,7 +18,7 @@ module.exports = mongoose => {
       //cv: {type: Buffer, require},
       courses:[{
         type: Schema.Types.ObjectId,
-        ref: 'Course'
+        ref: "Course"
       }],
       published: Boolean
     },
