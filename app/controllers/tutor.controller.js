@@ -120,7 +120,7 @@ exports.updatePublishment = (req, res) => {
   }
 
   const id = req.params.id;
-  var Newpassword = generator.generate({length:20, numbers: true, symbols:true, uppercase: false});
+  var Newpassword = generator.generate({length:20, numbers: true, uppercase: true});
   Tutor.findByIdAndUpdate(id, {published:true, password: Newpassword}, { useFindAndModify: false })
     .then(data => {
       if (!data) {
