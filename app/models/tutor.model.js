@@ -16,10 +16,6 @@ module.exports = mongoose => {
       achievement: {type: String, required: true},
       //profile: {type: Buffer, require},
       //cv: {type: Buffer, require},
-      courses:[{
-        type: Schema.Types.ObjectId,
-        ref: "Course"
-      }],
       published: Boolean
     },
     { timestamps: true }
