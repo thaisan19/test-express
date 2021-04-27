@@ -11,7 +11,8 @@ module.exports = mongoose => {
       phonenumber: {type: Number, required: true, max:999999999, min:10000000},
       email: {type: String, required: true, unique: true},
       expertise: {type: Array , required: true },
-      //schedule: {type: Array}
+      dayofweek: {type: Array, required: true},
+      timeofday: {type: Array, require:true},
       aboutme: {type: String, required: true},
       achievement: {type: String, required: true},
       //profile: {type: Buffer, require},

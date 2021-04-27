@@ -18,7 +18,8 @@ exports.create = (req, res) => {
       phonenumber: req.body.phonenumber,
       email: req.body.email,
       expertise: req.body.expertise,
-      //schedule: {type: Array}
+      dayofweek: req.body.dayofweek,
+      timeofday: req.body.timeofday,
       aboutme: req.body.aboutme,
       achievement: req.body.achievement,
       // profile: req.body.profile,
