@@ -22,9 +22,11 @@ exports.create = (req, res) => {
       timeofday: req.body.timeofday,
       aboutme: req.body.aboutme,
       achievement: req.body.achievement,
-      // profile: req.body.profile,
-      // cv: req.body.cv,
+      profile: req.body.profile,
+      cv: req.body.cv,
       published: req.body.published ? req.body.published : false,
+      uniqueString: req.body.uniqueString,
+      isValid: req.body.isValid ? req.body.isValid : false,
   });
 
   // Save Tutor in the database
