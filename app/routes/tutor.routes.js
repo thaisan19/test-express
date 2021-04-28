@@ -20,6 +20,9 @@ module.exports = app => {
 
     // Update Publish with id
     router.put("/publish/:id", tutor.updatePublishment)
+
+    // Update isValid with id
+    router.put("/isValid/:id", tutor.updateisValid)
       
     // Delete a Tutorial with id
     router.delete("/:id", tutor.delete);
