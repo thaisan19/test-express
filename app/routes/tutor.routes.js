@@ -3,19 +3,19 @@ module.exports = app => {
   
     var router = require("express").Router();
   
-    // Create a new Tutorial
+    // Create a new Tutor
     router.post("/", tutor.create);
   
-    // Retrieve all Tutorials
+    // Retrieve all Tutor
     router.get("/", tutor.findAll);
   
-    // Retrieve all published Tutorials
+    // Retrieve all published Tutor
     router.get("/published", tutor.findAllPublished);
   
-    // Retrieve a single Tutorial with id
+    // Retrieve a single Tutor with id
     router.get("/:id", tutor.findOne);
   
-    // Update a Tutorial with id
+    // Update a Tutor with id
     router.put("/:id", tutor.update);
 
     // Update Publish with id
@@ -24,10 +24,10 @@ module.exports = app => {
     // Update isValid with id
     router.put("/isValid/:id", tutor.updateisValid)
       
-    // Delete a Tutorial with id
+    // Delete a Tutor with id
     router.delete("/:id", tutor.delete);
   
-    // Create a new Tutorial
+    // Create a new Tutor
     router.delete("/", tutor.deleteAll);
   
     app.use('/api/tutor', router);

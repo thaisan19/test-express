@@ -6,7 +6,7 @@ module.exports = app => {
     var router = require("express").Router();
   
     // Create a new course
-    router.post("/:id", course.create);
+    router.post("/", course.create);
 
     
     // Retrieve all course

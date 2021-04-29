@@ -5,8 +5,8 @@ module.exports = mongoose => {
   var schema = mongoose.Schema(
     {
       username: {type: String, required: true, unique: true, maxLength: 20, minLength: 3},
-      firstname: {type: String, required: true, maxLength: 10, minLength: 3},
-      lastname: {type: String, required: true,maxLength:10, minLength:3},
+      firstname: {type: String, required: true, maxLength: 10, minLength: 1},
+      lastname: {type: String, required: true,maxLength:10, minLength:1},
       password: {type: String, default: ""},
       phonenumber: {type: Number, required: true, max:999999999, min:10000000, unique: true},
       email: {type: String, required: true, unique: true},
@@ -30,12 +30,16 @@ module.exports = mongoose => {
     { timestamps: true }
   );
 
-  schema.method("toJSON", function() {
-    const { __v, _id, ...object } = this.toObject();
-    object.id = _id;
-    return object;
-  });
+//Virtual schema
 
-  const Tutor = mongoose.model("tutor", schema);
+  schema.virtual("coursePublished", {
+    ref: 'Course', //The Model to use
+    localField: '_id', //Find in Model, where localField 
+    foreignField: 'tutorCourses', // is equal to foreignField
+  });
+  schema.set('toObject', {virutals: true});
+  schema.set('toJSON', {virtuals: true});
+
+  const Tutor = mongoose.model("Tutor", schema);
   return Tutor;
 };

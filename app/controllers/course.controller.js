@@ -1,19 +1,26 @@
 const db = require("../models");
 const Course = db.course;
 const Tutor = db.tutor;
-// Create and Save a new course
-exports.create = (req, res) => {
 
-  Course.create(req.body)
-  .then(function(dbCourse){
-      return Tutor.findOneAndUpdate({_id: req.params.id},{$push:{course: dbCourse._id}},{new:true, useFindAndModify: false});
-  })
-  .then(function(dbTutor){
-      res.json(dbTutor);
-  })
-  .catch(function(err){
-      res.json(err);
-  });
+// Create and Save a new course
+exports.create = async (req, res) => {
+  
+  try{
+    if (!req.body.title) {
+      res.status(400).send({ message: "Content can not be empty!" });
+      return;
+    }
+    if (!req.body.tutorCourses) {
+      res.status(400).send({ message: "Content can not be empty!" });
+      return;
+  }
+      const course = new Course(req.body);
+      await course.save()
+
+      res.status(200).json({success:true, data:course})
+  }catch(err){
+      res.status(400).json({success:false, message:err.message})
+  }
 };
 
 // Retrieve all course from the database.
@@ -28,7 +35,7 @@ exports.findAll = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while retrieving course."
+          err.message || "Some error occurred while retrieving tutorials."
       });
     });
 };
@@ -40,13 +47,13 @@ exports.findOne = (req, res) => {
   Course.findById(id)
     .then(data => {
       if (!data)
-        res.status(404).send({ message: "Not found course with id " + id });
+        res.status(404).send({ message: "Not found Tutorial with id " + id });
       else res.send(data);
     })
     .catch(err => {
       res
         .status(500)
-        .send({ message: "Error retrieving course with id=" + id });
+        .send({ message: "Error retrieving Tutorial with id=" + id });
     });
 };
 
@@ -64,18 +71,18 @@ exports.update = (req, res) => {
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot update course with id=${id}. Maybe course was not found!`
+          message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found!`
         });
-      } else res.status(200).send({ message: "Course was updated successfully." });
+      } else res.send({ message: "Tutorial was updated successfully." });
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error updating Course with id=" + id
+        message: "Error updating Tutorial with id=" + id
       });
     });
 };
 
-// Delete a Tutor with the specified id in the request
+// Delete a course with the specified id in the request
 exports.delete = (req, res) => {
   const id = req.params.id;
 
@@ -83,17 +90,17 @@ exports.delete = (req, res) => {
     .then(data => {
       if (!data) {
         res.status(404).send({
-          message: `Cannot delete course with id=${id}. Maybe course was not found!`
+          message: `Cannot delete Tutorial with id=${id}. Maybe Tutorial was not found!`
         });
       } else {
         res.send({
-          message: "Course was deleted successfully!"
+          message: "Tutorial was deleted successfully!"
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete course with id=" + id
+        message: "Could not delete Tutorial with id=" + id
       });
     });
 };
@@ -103,20 +110,20 @@ exports.deleteAll = (req, res) => {
   Course.deleteMany({})
     .then(data => {
       res.send({
-        message: `${data.deletedCount} course were deleted successfully!`
+        message: `${data.deletedCount} Tutorials were deleted successfully!`
       });
     })
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while removing all course."
+          err.message || "Some error occurred while removing all tutorials."
       });
     });
 };
 
 // Find all published course
 exports.findAllPublished = (req, res) => {
-  Tutor.find({ published: true })
+  Course.find({ published: true })
     .then(data => {
       res.send(data);
     })

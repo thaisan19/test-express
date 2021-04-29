@@ -58,25 +58,19 @@ tutor.isValid = isValid
     });
 };
 
-// Retrieve all Tutor from the database.
-exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
-
-  Tutor.find(condition)
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials."
-      });
-    });
+// Retrieve all tutor from the database.
+exports.findAll = async (req, res) => {
+  try {
+    const data = await Tutor.find()
+                            .populate({path: 'coursePublished', select: 'title'});
+    res.status(200).json({success: true, data});
+ } catch (err) {
+    res.status(400).json({success: false, message:err.message});
+ }
 };
 
 // Find one tutor with courses
-exports.findOne = (req, res) => {
+/*exports.findOne = (req, res) => {
 
   Tutor.findOne({_id: req.params.id})
   .populate("courses")
@@ -86,12 +80,12 @@ exports.findOne = (req, res) => {
   .catch(function(err){
     res.json(err);
   });
-};
+};*/
 // Find a single Tutor with an id
-/* exports.findOne = (req, res) => {
+exports.findOne = (req, res) => {
   const id = req.params.id;
-
   Tutor.findById(id)
+    .populate({path: 'coursePublished'})
     .then(data => {
       if (!data)
         res.status(404).send({ message: "Not found Tutorial with id " + id });
@@ -102,7 +96,7 @@ exports.findOne = (req, res) => {
         .status(500)
         .send({ message: "Error retrieving Tutorial with id=" + id });
     });
-};*/
+};
 
 // Update a Tutor by the id in the request
 exports.update = (req, res) => {
@@ -219,7 +213,7 @@ exports.deleteAll = (req, res) => {
 
 // Find all published Tutor
 exports.findAllPublished = (req, res) => {
-  Tutor.find({ published: true })
+  Tutor.find({ published: true, isValid: true })
     .then(data => {
       res.send(data);
     })
