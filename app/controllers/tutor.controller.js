@@ -1,3 +1,12 @@
+const dotenv = require('dotenv');
+const createError = require('http-errors');
+const nodemailer = require('nodemailer');
+const client = require('../helpers/init_redis');
+const { 
+        signAccessToken,
+        signRefreshToken,
+        verifyRefreshToken } = require('../helpers/jwt_helper');
+dotenv.config();
 const db = require("../models");
 const Tutor = db.tutor;
 var generator = require('generate-password');
@@ -223,4 +232,150 @@ exports.findAllPublished = (req, res) => {
           err.message || "Some error occurred while retrieving tutorials."
       });
     });
+};
+
+//Send Email to Tutor
+exports.sendEmailToTutor = async(req, res, next) => {
+  try{
+      const result = req.body
+      const Tutoruser = await Tutor.findOne({ email: result.email})
+      if(!Tutoruser) return next(createError.NotFound('Email is not registered'))
+
+      const sendMail = (email, uniqueString) => {
+          var Transport = nodemailer.createTransport({
+              service: "Gmail",
+              auth: {
+                  user: process.env.GMAIL,
+                  pass: process.env.PASSWORD
+              }
+          });
+
+          var mailOptions;
+          let sender = "TheMentor";
+          mailOptions = {
+              from: sender,
+              to: result.email,
+              subject: "Email confirmation",
+              html: `This is your account email: ${result.email} <br> This your your account password: ${Tutoruser.password}<br> Press <a href=http://localhost:8080/api/tutorAuth/tutorVerify/${uniqueString}> here </a> to verify your email.`
+          };
+          
+          Transport.sendMail(mailOptions, function(error, response){
+              if(error) {
+                  console.log(error);
+              }else {
+                  console.log('Message sent')
+                  res.json({ message:'Check your email to verify it'})
+              }
+          })
+      }
+      sendMail(result.email,Tutoruser.uniqueString)
+
+  }catch(error){
+      if(error.isJoi === true) error.status = 422
+      next(error)
+  }
+};
+
+// verify tutor account
+exports.tutorVerify = async(req, res, next) => {
+  try {
+
+      const result = req.body
+      const Tutoruser = await Tutor.findOne({ email: result.email})
+      if(!Tutoruser) return next(createError.NotFound('Email is not registered'))
+
+      let validPassword = false
+      if(result.password == Tutoruser.password)
+        {
+          validPassword = true
+      }
+      if(!validPassword) return next(createError.Unauthorized('Email/Password not valid'))
+
+      const { uniqueString } = req.params
+
+      const tutoruser = await Tutor.findOne({ uniqueString: uniqueString})
+      if(tutoruser)
+      {
+          tutoruser.isValid = true
+          await tutoruser.save()
+
+          const accessToken = await signAccessToken(tutoruser.id)
+          const refreshToken = await signRefreshToken(tutoruser.id)
+      
+          res.json({ accessToken, refreshToken });
+
+      }else{
+          res.json('User not found')
+      }
+
+
+  } catch (error) {
+      next(error)
+  }
+};
+
+// tutor Login Route
+exports.tutorLogin = async(req, res, next) => {
+  try{
+      const result = req.body
+  
+      const Tutoruser = await Tutor.findOne({ email: result.email})
+      if(!Tutoruser) return next(createError.NotFound('Email is not registered'))
+
+      if(!Tutoruser.isValid) return next(createError.Unauthorized('User not found'))
+      
+    
+      let validPassword = false
+      if(result.password == Tutoruser.password)
+      {
+          validPassword = true
+          
+      }
+      if(!validPassword) return next(createError.Unauthorized('Email/Password not valid'))
+  
+      const accessToken = await signAccessToken(Tutoruser.id)
+      const refreshToken = await signRefreshToken(Tutoruser.id)
+      
+      res.send({ accessToken, refreshToken });
+      
+  }catch(error){
+      if(error.isJoi === true)
+          return next(createError.BadRequest('Invalid Password'));
+  }
+};
+
+// Tutor Refresh Token Route
+exports.tutorRefreshToken = async(req, res, next) => {
+  try{
+      const{ refreshToken } = req.body
+      if(!refreshToken) next(createError.BadRequest())
+      const tutorId = await verifyRefreshToken(refreshToken)
+
+      const accessToken = await signAccessToken(tutorId)
+      const refToken = await signRefreshToken(tutorId)
+
+      res.send({ accessToken: accessToken, refreshToken: refToken })
+
+  }catch(error){
+      next(error)
+  }
+};
+
+// Tutor Logout Route
+exports.tutorLogout = async(req, res, next) => {
+  try{
+      const { refreshToken } = req.body
+      if(!refreshToken) next(createError.BadRequest())
+      const tutorId = await verifyRefreshToken(refreshToken)
+      client.DEL(tutorId, (err, val) => {
+          if(err){
+              next(createError.InternalServerError())
+          }
+          console.log(val)
+          res.send('Logout Successfully')
+      })
+  }catch(error)
+  {
+      next(error)
+  }
 };

@@ -25,10 +25,25 @@ module.exports = app => {
     router.put("/isValid/:id", tutor.updateisValid)
       
     // Delete a Tutor with id
-    router.delete("/:id", tutor.delete);
+    router.delete("/delete/:id", tutor.delete);
   
     // Create a new Tutor
     router.delete("/", tutor.deleteAll);
+
+    //send gmail to tutor route
+    router.post('/sendEmail', tutor.sendEmailToTutor);
+
+    //verify gmail route
+    router.post('/tutorVerify/:uniqueString', tutor.tutorVerify);
+
+    //login route
+    router.post('/tutorLogin', tutor.tutorLogin);
+
+    //refresh-token route
+    router.post('/refresh-token', tutor.tutorRefreshToken);
+
+    //logout route
+    router.delete('/tutorLogout', tutor.tutorLogout);
   
     app.use('/api/tutor', router);
   };

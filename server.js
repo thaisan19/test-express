@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const createError = require('http-errors');
+const { verifyAccessToken } = require('./app/helpers/jwt_helper');
 
 const app = express();
 
@@ -21,7 +23,8 @@ const db = require("./app/models");
 db.mongoose
   .connect(db.url, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
   })
   .then(() => {
     console.log("Connected to the database!");
@@ -31,7 +34,7 @@ db.mongoose
     process.exit();
   });
 // simple route
-app.get("/", (req, res) => {
+app.get("/",verifyAccessToken,(req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
@@ -39,6 +42,20 @@ app.get("/", (req, res) => {
 
 require("./app/routes/tutor.routes")(app);
 require("./app/routes/course.routes")(app);
+
+app.use(async (req, res, next) => {
+  next(createError.NotFound())
+})
+
+app.use((err, req, res, next) => {
+res.status(err.status || 500)
+res.send({
+    error:{
+        status: err.status || 500,
+        message: err.message
+    }
+})
+})
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
