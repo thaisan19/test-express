@@ -1,28 +1,31 @@
+const db = require("../models/index.js");
+
 module.exports = app => {
-    const courses = require("../controllers/course.controller.js");
+    const course = require("../controllers/course.controller.js");
   
     var router = require("express").Router();
   
-    // Create a new Tutorial
-    router.post("/", courses.create);
+    // Create a new course
+    router.post("/", course.create);
+
+    
+    // Retrieve all course
+    router.get("/", course.findAll);
   
-    // Retrieve all courses
-    router.get("/", courses.findAll);
+    // Retrieve all published course
+    router.get("/published", course.findAllPublished);
   
-    // Retrieve all published courses
-    router.get("/published", courses.findAllPublished);
+    // Retrieve a single course with id
+    router.get("/:id", course.findOne);
   
-    // Retrieve a single Tutorial with id
-    router.get("/:id", courses.findOne);
+    // Update a course with id
+    router.put("/:id", course.update);
+      
+    // Delete a course with id
+    router.delete("/:id", course.delete);
   
-    // Update a Tutorial with id
-    router.put("/:id", courses.update);
+    // Delete all course
+    router.delete("/", course.deleteAll);
   
-    // Delete a Tutorial with id
-    router.delete("/:id", courses.delete);
-  
-    // Create a new Tutorial
-    router.delete("/", courses.deleteAll);
-  
-    app.use('/api/courses', router);
+    app.use('/api/course', router);
   };
