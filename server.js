@@ -17,7 +17,6 @@ app.use(bodyParser.json());
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
-
 // db calling
 const db = require("./app/models");
 db.mongoose
@@ -37,8 +36,6 @@ db.mongoose
 app.get("/",verifyAccessToken,(req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
-
-
 
 require("./app/routes/tutor.routes")(app);
 require("./app/routes/course.routes")(app);

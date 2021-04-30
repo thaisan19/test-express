@@ -8,4 +8,5 @@ db.mongoose = mongoose;
 db.url = dbConfig.url;
 db.tutor = require("./tutor.model.js")(mongoose);
 db.course = require("./course.model.js")(mongoose);
+
 module.exports = db;
