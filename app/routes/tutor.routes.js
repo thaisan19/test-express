@@ -20,14 +20,11 @@ module.exports = app => {
 
     // Update Publish with id
     router.put("/publish/:id", tutor.updatePublishment)
-
-    // Update isValid with id
-    router.put("/isValid/:id", tutor.updateisValid)
       
     // Delete a Tutor with id
     router.delete("/delete/:id", tutor.delete);
   
-    // Create a new Tutor
+    // Delete all Tutor
     router.delete("/", tutor.deleteAll);
 
     //send gmail to tutor route

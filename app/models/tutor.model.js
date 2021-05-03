@@ -15,10 +15,14 @@ module.exports = mongoose => {
       timeofday: {type: Array, require:true},
       aboutme: {type: String, required: true},
       achievement: {type: String, required: true},
-      profile: {type: Buffer },
-      cv: {type: Buffer},
+      profile: {type: Buffer, require: true },
+      cv: {type: Buffer, require: true},
       published: Boolean,
       uniqueString: {
+        type: String,
+        require: true
+      },
+      role: {
         type: String,
         require: true
       },
