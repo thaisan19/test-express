@@ -47,7 +47,8 @@ exports.create = (req, res) => {
     }
     return randStr
 }
-
+const role = tutorer
+tutor.role = role
 const uniqueString = randString()
 const isValid = false
 tutor.uniqueString = uniqueString
@@ -143,30 +144,6 @@ exports.updatePublishment = (req, res) => {
   const id = req.params.id;
   var Newpassword = generator.generate({length:20, numbers: true, uppercase: true});
   Tutor.findByIdAndUpdate(id, {published:true, password: Newpassword}, { useFindAndModify: false })
-    .then(data => {
-      if (!data) {
-        res.status(404).send({
-          message: `Cannot update Tutorial with id=${id}. Maybe Tutorial was not found!`
-        });
-      } else res.status(200).send({ message: "Tutorial was updated successfully."});
-    })
-    .catch(err => {
-      res.status(500).send({
-        message: "Error updating Tutorial with id=" + id
-      });
-    });
-};
-
-//updateisValid
-exports.updateisValid = (req, res) => {
-  if (!req.body) {
-    return res.status(400).send({
-      message: "Data to update can not be empty!"
-    });
-  }
-
-  const id = req.params.id;
-  Tutor.findByIdAndUpdate(id, {isValid:true}, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -323,7 +300,10 @@ exports.tutorLogin = async(req, res, next) => {
       if(!Tutoruser) return next(createError.NotFound('Email is not registered'))
 
       if(!Tutoruser.isValid) return next(createError.Unauthorized('User not found'))
-      
+      if(Tutoruser.role != tutorer)
+      {
+          return next(createError.Unauthorized('User not found'))
+      }
     
       let validPassword = false
       if(result.password == Tutoruser.password)
@@ -332,7 +312,7 @@ exports.tutorLogin = async(req, res, next) => {
           
       }
       if(!validPassword) return next(createError.Unauthorized('Email/Password not valid'))
-  
+      
       const accessToken = await signAccessToken(Tutoruser.id)
       const refreshToken = await signRefreshToken(Tutoruser.id)
       

@@ -12,9 +12,6 @@ module.exports = app => {
     // Retrieve all course
     router.get("/", course.findAll);
   
-    // Retrieve all published course
-    router.get("/published", course.findAllPublished);
-  
     // Retrieve a single course with id
     router.get("/:id", course.findOne);
   
@@ -24,7 +21,7 @@ module.exports = app => {
     // Delete a course with id
     router.delete("/:id", course.delete);
   
-    // Delete all course
+    // Delete all courses
     router.delete("/", course.deleteAll);
   
     app.use('/api/course', router);
