@@ -33,7 +33,7 @@ db.mongoose
     process.exit();
   });
 // simple route
-app.get("/",verifyAccessToken,(req, res) => {
+app.get("/",(req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
 });
 
@@ -54,7 +54,7 @@ res.send({
 })
 })
 // set port, listen for requests
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });

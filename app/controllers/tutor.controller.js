@@ -47,7 +47,7 @@ exports.create = (req, res) => {
     }
     return randStr
 }
-const role = tutorer
+const role = "tutorer"
 tutor.role = role
 const uniqueString = randString()
 const isValid = false
@@ -296,7 +296,7 @@ exports.tutorLogin = async(req, res, next) => {
   try{
       const result = req.body
   
-      const Tutoruser = await Tutor.findOne({ email: result.email})
+      const Tutoruser = await Tutor.findOne({ email: result.email })
       if(!Tutoruser) return next(createError.NotFound('Email is not registered'))
 
       if(!Tutoruser.isValid) return next(createError.Unauthorized('User not found'))
